@@ -2,7 +2,7 @@
 title: DnD DM Assistant
 emoji: 🐉
 colorFrom: red
-colorTo: orange
+colorTo: yellow
 sdk: streamlit
 sdk_version: 1.42.0
 app_file: app.py
