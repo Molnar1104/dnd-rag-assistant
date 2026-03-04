@@ -25,7 +25,7 @@ def chunk_dnd_text(input_txt_path):
 
     # Split the text
     chunks = text_splitter.create_documents([text])
-    print(f"Success! Split the rulebook into {len(chunks)} overlapping chunks.")
+    print(f"Success. Split the rulebook into {len(chunks)} overlapping chunks.")
     
     # Let's print the first chunk just to verify it looks clean
     if chunks:

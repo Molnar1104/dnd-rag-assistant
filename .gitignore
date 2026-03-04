@@ -10,7 +10,6 @@ __pycache__/
 # Data and Vector DBs
 data/
 *.pdf
-chroma_db/
 faiss_index/
 
 # OS generated files

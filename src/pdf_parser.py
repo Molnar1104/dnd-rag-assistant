@@ -45,7 +45,7 @@ def extract_text_from_dnd_pdf(pdf_path, output_path):
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(extracted_text)
         
-    print(f"Success! Extracted {len(doc)} pages to {output_path}")
+    print(f"Success. Extracted {len(doc)} pages to {output_path}")
 
 if __name__ == "__main__":
     # Get the directory where THIS script is located (the 'src' folder)
