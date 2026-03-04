@@ -16,4 +16,4 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         # Replace 'Molki' with your actual HF username if it is different
-        run: git push https://Molki:$HF_TOKEN@huggingface.co/spaces/Molki/dnd-rag-assistant main
+        run: git push --force https://Molki:$HF_TOKEN@huggingface.co/spaces/Molki/dnd-rag-assistant main
