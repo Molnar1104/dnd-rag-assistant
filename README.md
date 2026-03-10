@@ -21,7 +21,7 @@ This project uses a modern AI/Data Engineering pipeline to ensure the LLM never 
 * **Frontend UI:** Streamlit
 * **LLM / Generation:** Google Gemini 3 Flash (via official `google-genai` SDK)
 * **Vector Database:** ChromaDB (Local SQLite implementation)
-* **Embeddings:** HuggingFace `all-MiniLM-L6-v2`
+* **Embeddings:** HuggingFace `EmbeddingGemma`
 * **Orchestration / Text Splitters:** LangChain
 * **CI/CD:** GitHub Actions (Automated sync to Hugging Face Spaces) & Git LFS for large database files.
 
