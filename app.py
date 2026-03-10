@@ -53,8 +53,11 @@ if prompt := st.chat_input("E.g., How do I grapple a creature?"):
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         
-        # 1. Retrieve context
-        results = vector_db.similarity_search(prompt, k=3)
+        # 1. Retrieve context with scores
+        results_with_scores = vector_db.similarity_search_with_score(prompt, k=15)
+        
+        # Separate just the documents to feed into the LLM
+        results = [doc for doc, score in results_with_scores]
         context_text = "\n\n".join([doc.page_content for doc in results])
         
         # 2. Build the LLM prompt
@@ -83,4 +86,11 @@ if prompt := st.chat_input("E.g., How do I grapple a creature?"):
         # Display the result
         message_placeholder.markdown(response.text)
         
+        # --- NEW: Observability / Sources Expander ---
+        with st.expander("📚 View Retrieved Rulebook Sources"):
+            st.markdown("*Note: Lower distance scores indicate higher relevance.*")
+            for i, (doc, score) in enumerate(results_with_scores):
+                # Create a mini-expander for each individual source
+                with st.expander(f"Source {i+1} (Distance Score: {score:.4f})"):
+                    st.text(doc.page_content)
     st.session_state.messages.append({"role": "assistant", "content": response.text})
