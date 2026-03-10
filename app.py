@@ -19,7 +19,14 @@ st.markdown("Ask me any rules question, and I will cite the official sources!")
 @st.cache_resource
 def load_vector_db():
     persist_directory = os.path.join(os.path.dirname(__file__), "chroma_db")
-    embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    
+    # Initialize our new 2026 SOTA embedding model
+    embedding_model = HuggingFaceEmbeddings(
+        model_name="google/embeddinggemma-300m",
+        # Use the specific query prompt required by EmbeddingGemma
+        encode_kwargs={"prompt_name": "Retrieval-query"}
+    )
+    
     return Chroma(persist_directory=persist_directory, embedding_function=embedding_model)
 
 # Initialize database and Gemini client

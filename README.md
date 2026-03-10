@@ -30,3 +30,12 @@ This project uses a modern AI/Data Engineering pipeline to ensure the LLM never 
 2. **Chunking:** The text is split into overlapping 1000-character chunks to preserve rule context.
 3. **Retrieval:** User queries are embedded, and ChromaDB retrieves the top 3 most mathematically relevant chunks.
 4. **Generation:** Gemini reads only the retrieved chunks and formulates a clear, conversational answer.
+
+
+## Legal and Compliance
+
+**Gemma Terms of Use**
+This Hosted Service is built using Google's Gemma model. By using this service, you agree to be bound by the [Gemma Terms of Use](https://ai.google.dev/gemma/terms). 
+
+**Use Restrictions**
+Your use of this model and its outputs is strictly subject to the restrictions set forth in the [Gemma Prohibited Use Policy](https://ai.google.dev/gemma/prohibited_use_policy). You agree not to use this service for any restricted uses outlined in that policy or in violation of applicable laws and regulations.

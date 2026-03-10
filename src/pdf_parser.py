@@ -1,58 +1,52 @@
 import fitz  # PyMuPDF
 import os
 import re
+import glob
 
-def extract_text_from_dnd_pdf(pdf_path, output_path):
-    """
-    Extracts text from a multi-column PDF rulebook using block extraction.
-    """
-    if not os.path.exists(pdf_path):
-        print(f"Error: Could not find {pdf_path}")
+def extract_text_from_all_pdfs(data_dir, output_path):
+    all_text = ""
+    # Find all PDF files in the data directory
+    pdf_files = glob.glob(os.path.join(data_dir, "*.pdf"))
+    
+    if not pdf_files:
+        print(f"Error: No PDFs found in {data_dir}")
         return
 
-    print(f"Opening {pdf_path}...")
-    doc = fitz.open(pdf_path)
-    extracted_text = ""
+    print(f"Found {len(pdf_files)} rulebooks. Starting extraction...\n" + "-"*40)
 
-    # Iterate through each page
-    for page_num in range(len(doc)):
-        page = doc.load_page(page_num)
-        
-        # Extract text as blocks to maintain column reading order
-        blocks = page.get_text("blocks")
-        
-        # Sort blocks vertically (y-axis) and then horizontally (x-axis) because of the way dnd rulebooks position text
-        # This helps ensure we read down a column before jumping to the next
-        blocks.sort(key=lambda b: (b[1], b[0])) 
+    for pdf_path in pdf_files:
+        print(f"Processing: {os.path.basename(pdf_path)}...")
+        try:
+            doc = fitz.open(pdf_path)
+            for page_num in range(len(doc)):
+                page = doc.load_page(page_num)
+                blocks = page.get_text("blocks")
+                # Sort blocks top-to-bottom, left-to-right (handles multi-column DnD layouts)
+                blocks.sort(key=lambda b: (b[1], b[0])) 
 
-        for block in blocks:
-            text = block[4] 
-            
-            # Clean up weird PDF unicode separators (Line Separator, Paragraph Separator, Non-breaking space)
-            text = text.replace('\u2028', ' ').replace('\u2029', ' \n\n')
-            text = text.replace('\xa0', ' ')
-            
-            # Clean up standard mid-sentence line breaks
-            text = text.replace('\n', ' ').strip()
-            
-            # Collapse multiple spaces into a single space
-            text = re.sub(r' +', ' ', text)
-            
-            if text: 
-                extracted_text += text + "\n\n"
-                
-    # Save the cleaned text
+                for block in blocks:
+                    text = block[4] 
+                    
+                    # Clean up PDF unicode artifacts
+                    text = text.replace('\u2028', ' ').replace('\u2029', ' \n\n')
+                    text = text.replace('\xa0', ' ')
+                    text = text.replace('\n', ' ').strip()
+                    text = re.sub(r' +', ' ', text)
+                    
+                    if text: 
+                        all_text += text + "\n\n"
+            print(f"✔ Successfully extracted {len(doc)} pages.")
+        except Exception as e:
+            print(f"Error reading {os.path.basename(pdf_path)}: {e}")
+        
+    # Save the combined text
     with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(extracted_text)
-        
-    print(f"Success. Extracted {len(doc)} pages to {output_path}")
+        f.write(all_text)
+    print("-" * 40 + f"\nSuccess! Combined all text into {output_path}")
 
 if __name__ == "__main__":
-    # Get the directory where THIS script is located (the 'src' folder)
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    # Construct the path accurately relative to the script
-    input_pdf = os.path.join(script_dir, "..", "data", "sample_rulebook.pdf")
+    data_dir = os.path.join(script_dir, "..", "data")
     output_txt = os.path.join(script_dir, "..", "data", "extracted_rules.txt")
     
-    extract_text_from_dnd_pdf(input_pdf, output_txt)
+    extract_text_from_all_pdfs(data_dir, output_txt)
