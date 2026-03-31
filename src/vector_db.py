@@ -4,24 +4,22 @@ from langchain_chroma import Chroma
 from text_chunker import chunk_dnd_text
 
 def build_vector_db():
+    """Chunks the extracted rulebook text, embeds it, and persists the vectors to ChromaDB."""
     script_dir = os.path.dirname(os.path.abspath(__file__))
     input_txt = os.path.join(script_dir, "..", "data", "extracted_rules.txt")
     persist_directory = os.path.join(script_dir, "..", "chroma_db")
 
     print("Fetching text chunks...")
     chunks = chunk_dnd_text(input_txt)
-    
+
     if not chunks:
         return
 
-    print("Downloading/Initializing EmbeddingGemma 300M...")
-    
-    # We added "show_progress_bar": True to the encode_kwargs!
-    # Move the progress bar instruction outside of encode_kwargs
+    print("Downloading/Initializing all-MiniLM-L6-v2...")
+
     embedding_model = HuggingFaceEmbeddings(
-        model_name="google/embeddinggemma-300m",
-        encode_kwargs={"prompt_name": "Retrieval-document"},
-        show_progress=True  # <--- LangChain handles it directly here!
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        show_progress=True
     )
 
     print(f"Embedding {len(chunks)} chunks and saving to {persist_directory}...")

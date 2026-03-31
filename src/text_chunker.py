@@ -26,10 +26,20 @@ def chunk_dnd_text(input_txt_path):
     # Split the text
     chunks = text_splitter.create_documents([text])
     print(f"Success. Split the rulebook into {len(chunks)} overlapping chunks.")
-    
+
+    # Second pass: print chunk statistics for tuning
+    if chunks:
+        chunk_lengths = [len(c.page_content) for c in chunks]
+        avg_length = sum(chunk_lengths) / len(chunk_lengths)
+        print(f"\n--- CHUNK STATISTICS ---")
+        print(f"Total chunks: {len(chunks)}")
+        print(f"Average chunk length: {avg_length:.0f} characters")
+        print(f"Min: {min(chunk_lengths)} / Max: {max(chunk_lengths)} characters")
+        print("------------------------\n")
+
     # Let's print the first chunk just to verify it looks clean
     if chunks:
-        print("\n--- SAMPLE CHUNK ---")
+        print("--- SAMPLE CHUNK ---")
         print(chunks[0].page_content)
         print("--------------------\n")
 

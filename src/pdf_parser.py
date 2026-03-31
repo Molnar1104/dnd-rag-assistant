@@ -4,6 +4,7 @@ import re
 import glob
 
 def extract_text_from_all_pdfs(data_dir, output_path):
+    """Extracts and cleans text from all PDFs in data_dir, saving combined output to output_path."""
     all_text = ""
     # Find all PDF files in the data directory
     pdf_files = glob.glob(os.path.join(data_dir, "*.pdf"))
@@ -18,24 +19,27 @@ def extract_text_from_all_pdfs(data_dir, output_path):
         print(f"Processing: {os.path.basename(pdf_path)}...")
         try:
             doc = fitz.open(pdf_path)
+            pdf_text = ""
             for page_num in range(len(doc)):
                 page = doc.load_page(page_num)
                 blocks = page.get_text("blocks")
                 # Sort blocks top-to-bottom, left-to-right (handles multi-column DnD layouts)
-                blocks.sort(key=lambda b: (b[1], b[0])) 
+                blocks.sort(key=lambda b: (b[1], b[0]))
 
                 for block in blocks:
-                    text = block[4] 
-                    
+                    text = block[4]
+
                     # Clean up PDF unicode artifacts
                     text = text.replace('\u2028', ' ').replace('\u2029', ' \n\n')
                     text = text.replace('\xa0', ' ')
                     text = text.replace('\n', ' ').strip()
                     text = re.sub(r' +', ' ', text)
-                    
-                    if text: 
-                        all_text += text + "\n\n"
-            print(f"✔ Successfully extracted {len(doc)} pages.")
+
+                    if text:
+                        pdf_text += text + "\n\n"
+            word_count = len(pdf_text.split())
+            all_text += pdf_text
+            print(f"✔ Successfully extracted {len(doc)} pages — {word_count} words.")
         except Exception as e:
             print(f"Error reading {os.path.basename(pdf_path)}: {e}")
         
